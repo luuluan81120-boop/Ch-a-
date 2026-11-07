@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2a0f0a">
+<title>Chùa Online - An Lạc Tự</title>
+<style>
+:root{
+  --bg:#1f0b07; --bg2:#3a160d; --gold:#e6b85c; --gold2:#f7dc95; --red:#8f1d14;
+  --paper:#fbf1d9; --ink:#3b1d10; --muted:#c9a87a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Be Vietnam Pro","Segoe UI",system-ui,Roboto,sans-serif;
+  background:radial-gradient(ellipse at top,#4a1d10 0%,var(--bg) 70%) fixed;
+  color:var(--paper); min-height:100vh; min-height:100dvh;
+  padding-bottom:calc(76px + env(safe-area-inset-bottom));
+  overflow-x:hidden;
+}
+header{text-align:center;padding:18px 16px 6px;padding-top:calc(18px + env(safe-area-inset-top))}
+header h1{margin:0;font-family:"Noto Serif","Times New Roman",serif;font-size:clamp(22px,6vw,34px);color:var(--gold2);letter-spacing:2px}
+header p{margin:4px 0 0;color:var(--muted);font-size:14px}
+main{max-width:760px;margin:0 auto;padding:8px 14px 20px}
+section{display:none;animation:fade .4s ease}
+section.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  display:flex;background:rgba(25,8,4,.96);border-top:1px solid #6b3a1c;
+  padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(8px);
+}
+nav button{
+  flex:1;background:none;border:0;color:var(--muted);padding:9px 2px 8px;font-size:11.5px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;font-family:inherit
+}
+nav button .ic{font-size:22px;line-height:1}
+nav button.active{color:var(--gold2)}
+nav button.active .ic{filter:drop-shadow(0 0 6px var(--gold))}
+
+.card{background:rgba(255,235,190,.06);border:1px solid rgba(230,184,92,.25);border-radius:16px;padding:14px;margin:10px 0}
+.card h2{margin:0 0 8px;font-family:"Noto Serif",serif;color:var(--gold2);font-size:19px}
+.btn{
+  background:linear-gradient(#c9892a,#8f5a12);color:#fff7e0;border:1px solid #f1c76a;border-radius:999px;
+  padding:11px 20px;font-size:15px;cursor:pointer;font-family:inherit;min-height:44px;
+  box-shadow:0 3px 10px rgba(0,0,0,.4)
+}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--gold2)}
+.btn.small{padding:7px 14px;font-size:13px;min-height:36px}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:10px 0}
+
+/* ===== Chánh điện ===== */
+.hall{
+  position:relative;border-radius:18px;overflow:hidden;border:2px solid #7a4a1c;
+  background:linear-gradient(#5a1d10,#2a0d07 60%,#1a0804);
+  padding:10px 0 0;
+}
+.glow{position:absolute;left:50%;top:6%;width:70%;height:50%;transform:translateX(-50%);
+  background:radial-gradient(circle,rgba(255,214,120,.45),transparent 65%);animation:pulse 4s ease-in-out infinite;pointer-events:none}
+@keyframes pulse{50%{opacity:.55;transform:translateX(-50%) scale(1.08)}}
+.buddha{display:block;width:min(62%,300px);margin:0 auto;position:relative}
+.altar{
+  position:relative;margin-top:-6px;background:linear-gradient(#7a3a14,#4a1f0a);
+  border-top:4px solid #e6b85c;padding:12px 8px 16px;
+}
+.altar-grid{display:flex;justify-content:space-around;align-items:flex-end;gap:4px;min-height:150px}
+.slot{flex:1;text-align:center;position:relative;min-width:0}
+.slot .lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.lamp{font-size:34px;filter:grayscale(1) brightness(.6);transition:.4s}
+.lamp.on{filter:none;animation:flick 1.6s infinite alternate;text-shadow:0 0 18px #ffb52e}
+@keyframes flick{from{transform:scale(1)}to{transform:scale(1.07) rotate(-2deg)}}
+.offer{font-size:34px;opacity:.25;transition:.5s;filter:grayscale(1)}
+.offer.on{opacity:1;filter:none}
+.censer{position:relative;height:130px}
+.bowl{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:84px;height:36px;
+  background:linear-gradient(#e0a93e,#8a5a14);border-radius:6px 6px 44px 44px;border:1px solid #ffd77a}
+.bowl::after{content:"";position:absolute;left:8%;right:8%;top:-5px;height:11px;background:#d8c9a0;border-radius:50%;opacity:.9}
+.stick{position:absolute;bottom:26px;width:4px;background:#b0381c;border-radius:2px;transform-origin:bottom center;transition:height 1s linear}
+.stick .tip{position:absolute;top:-3px;left:-1px;width:6px;height:6px;border-radius:50%;background:#ff6a1a;box-shadow:0 0 8px 3px #ff8a2a}
+.smoke{position:absolute;bottom:0;left:50%;width:16px;height:16px;border-radius:50%;
+  background:rgba(235,235,235,.5);filter:blur(5px);pointer-events:none;animation:rise 5s linear forwards}
+@keyframes rise{
+  0%{transform:translate(-50%,0) scale(.4);opacity:.7}
+  50%{transform:translate(calc(-50% + var(--dx)),-120px) scale(1.2);opacity:.35}
+  100%{transform:translate(calc(-50% + var(--dx2)),-240px) scale(2.2);opacity:0}
+}
+.msg{text-align:center;font-style:italic;color:var(--gold2);min-height:24px;margin:8px 0;font-size:15px}
+
+/* ===== Kinh ===== */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:0 0 auto;background:transparent;color:var(--muted);border:1px solid #6b3a1c;border-radius:999px;padding:8px 14px;font-family:inherit;font-size:13.5px;cursor:pointer}
+.tabs button.active{background:var(--gold);color:#3a1a05;border-color:var(--gold)}
+.paper{background:var(--paper);color:var(--ink);border-radius:14px;padding:16px;box-shadow:inset 0 0 40px rgba(150,90,30,.18)}
+.paper h3{font-family:"Noto Serif",serif;text-align:center;margin:0 0 4px;color:var(--red);font-size:21px}
+.paper .intro{text-align:center;font-size:13.5px;color:#6b4a30;margin-bottom:12px}
+.verse{padding:10px 8px;border-radius:10px;border-bottom:1px dashed #d9bd8a;cursor:pointer;transition:background .3s}
+.verse .t{font-family:"Noto Serif",serif;font-size:clamp(17px,4.6vw,20px);line-height:1.6;text-align:center;font-weight:600}
+.verse .g{display:none;margin-top:8px;font-size:14.5px;line-height:1.6;color:#5c3a22;background:#f3dfae;border-left:4px solid var(--red);padding:8px 10px;border-radius:6px}
+.verse.open .g{display:block}
+.verse.reading{background:#ffe9a8}
+.hint{font-size:12.5px;text-align:center;color:#8b6a45;margin:0 0 8px}
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+.ctrl .btn{background:linear-gradient(#a52a1d,#6d140c)}
+
+/* ===== Gõ mõ ===== */
+.mo-wrap{text-align:center}
+.count{font-family:"Noto Serif",serif;font-size:clamp(46px,16vw,76px);color:var(--gold2);line-height:1;margin:6px 0}
+.mo{
+  width:min(62vw,240px);height:min(62vw,240px);border-radius:50%;border:0;margin:10px auto;display:block;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#d9953a,#8a4a12 60%,#4a2208);
+  box-shadow:0 10px 24px rgba(0,0,0,.6),inset 0 -10px 20px rgba(0,0,0,.35);
+  font-size:min(26vw,100px);transition:transform .08s;touch-action:manipulation;user-select:none;-webkit-user-select:none
+}
+.mo.hit{transform:scale(.92)}
+.chant{font-family:"Noto Serif",serif;color:var(--paper);font-size:18px;min-height:30px}
+.pop{position:fixed;pointer-events:none;color:var(--gold2);font-size:16px;font-weight:700;animation:pop 1s ease-out forwards;z-index:70;text-shadow:0 0 6px #000}
+@keyframes pop{to{transform:translateY(-70px);opacity:0}}
+select,textarea,input[type=text]{
+  width:100%;background:#fff8e6;border:1px solid #c8a35c;color:var(--ink);border-radius:10px;padding:10px;font-size:16px;font-family:inherit
+}
+textarea{min-height:90px;resize:vertical}
+.pray-item{background:rgba(255,235,190,.08);border:1px solid rgba(230,184,92,.25);border-radius:12px;padding:10px 12px;margin:8px 0;font-size:14.5px;line-height:1.5}
+.pray-item small{color:var(--muted);display:block;margin-top:4px}
+.stats{display:flex;gap:8px;text-align:center}
+.stats div{flex:1;background:rgba(255,235,190,.08);border-radius:12px;padding:10px 4px}
+.stats b{display:block;font-size:22px;color:var(--gold2)}
+.stats span{font-size:12px;color:var(--muted)}
+footer{text-align:center;color:#a88458;font-size:12px;padding:10px 20px 20px}
+.lantern-sky{position:fixed;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+.lantern{position:absolute;bottom:-60px;font-size:28px;animation:float linear forwards;opacity:.9}
+@keyframes float{to{transform:translateY(-110vh) translateX(var(--sx));opacity:0}}
+main,header,nav{position:relative;z-index:2}
+nav{position:fixed}
+@media (min-width:700px){nav{left:50%;transform:translateX(-50%);max-width:760px;border-radius:16px 16px 0 0;border:1px solid #6b3a1c}}
+</style>
+</head>
+<body>
+<div class="lantern-sky" id="sky"></div>
+
+<header>
+  <h1>🪷 AN LẠC TỰ 🪷</h1>
+  <p>Chùa online · Nơi tâm an, lòng tịnh</p>
+</header>
+
+<main>
+<!-- ================= CHÁNH ĐIỆN ================= -->
+<section id="s-hall" class="active">
+  <div class="hall">
+    <div class="glow"></div>
+    <svg class="buddha" viewBox="0 0 300 330" xmlns="http://www.w3.org/2000/svg" aria-label="Tượng Phật">
+      <defs>
+        <radialGradient id="aura" cx="50%" cy="40%" r="55%"><stop offset="0" stop-color="#fff2b0" stop-opacity=".9"/><stop offset="1" stop-color="#f0b43c" stop-opacity="0"/></radialGradient>
+        <linearGradient id="gold" x1="0" x2="1"><stop offset="0" stop-color="#b8801f"/><stop offset=".5" stop-color="#f7dc95"/><stop offset="1" stop-color="#b8801f"/></linearGradient>
+        <linearGradient id="lot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd2dc"/><stop offset="1" stop-color="#e0668a"/></linearGradient>
+      </defs>
+      <circle cx="150" cy="110" r="105" fill="url(#aura)"/>
+      <circle cx="150" cy="110" r="78" fill="none" stroke="#f7dc95" stroke-width="2" opacity=".6"/>
+      <!-- lotus -->
+      <g fill="url(#lot)" stroke="#a63a5c" stroke-width="1.2">
+        <ellipse cx="60" cy="298" rx="38" ry="15"/><ellipse cx="105" cy="305" rx="38" ry="15"/>
+        <ellipse cx="195" cy="305" rx="38" ry="15"/><ellipse cx="240" cy="298" rx="38" ry="15"/>
+        <ellipse cx="150" cy="310" rx="48" ry="16"/>
+      </g>
+      <!-- body -->
+      <path d="M70 290 Q60 220 105 190 Q150 175 195 190 Q240 220 230 290 Z" fill="url(#gold)" stroke="#8a5a14" stroke-width="2"/>
+      <path d="M105 190 Q150 240 195 190" fill="none" stroke="#8a5a14" stroke-width="2"/>
+      <path d="M110 250 Q150 270 190 250" fill="none" stroke="#8a5a14" stroke-width="2"/>
+      <!-- hands -->
+      <ellipse cx="150" cy="255" rx="34" ry="14" fill="#f2cf7c" stroke="#8a5a14" stroke-width="2"/>
+      <!-- head -->
+      <ellipse cx="150" cy="115" rx="40" ry="48" fill="url(#gold)" stroke="#8a5a14" stroke-width="2"/>
+      <path d="M118 90 Q150 45 182 90 Q150 70 118 90Z" fill="#2c3a63"/>
+      <circle cx="150" cy="52" r="11" fill="#2c3a63"/><circle cx="150" cy="86" r="3" fill="#8a1d14"/>
+      <path d="M133 112 Q140 108 147 112" stroke="#5a3410" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M153 112 Q160 108 167 112" stroke="#5a3410" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M142 135 Q150 142 158 135" stroke="#8a2a1a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+      <path d="M108 112 Q100 140 112 158" stroke="#8a5a14" stroke-width="3" fill="none"/>
+      <path d="M192 112 Q200 140 188 158" stroke="#8a5a14" stroke-width="3" fill="none"/>
+    </svg>
+    <div class="altar">
+      <div class="altar-grid">
+        <div class="slot"><div class="lamp" id="lampL">🪔</div><div class="lbl">Đèn</div></div>
+        <div class="slot"><div class="offer" id="offFlower">🌸</div><div class="lbl">Hoa</div></div>
+        <div class="slot">
+          <div class="censer" id="censer"><div class="bowl"></div></div>
+          <div class="lbl">Lư hương</div>
+        </div>
+        <div class="slot"><div class="offer" id="offFruit">🍎</div><div class="lbl">Quả</div></div>
+        <div class="slot"><div class="lamp" id="lampR">🪔</div><div class="lbl">Đèn</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="msg" id="hallMsg">Chắp tay, tĩnh tâm… rồi thắp một nén hương.</div>
+  <div class="row">
+    <button class="btn" id="btnIncense">🔥 Thắp nhang</button>
+    <button class="btn" id="btnLamp">🪔 Thắp đèn</button>
+    <button class="btn" id="btnFlower">🌸 Dâng hoa</button>
+    <button class="btn" id="btnFruit">🍎 Dâng quả</button>
+    <button class="btn ghost" id="btnBell">🔔 Thỉnh chuông</button>
+    <button class="btn ghost" id="btnLantern">🏮 Thả đèn hoa đăng</button>
+  </div>
+  <div class="card stats">
+    <div><b id="stIncense">0</b><span>nén hương</span></div>
+    <div><b id="stMo">0</b><span>tiếng mõ</span></div>
+    <div><b id="stName">0</b><span>câu niệm Phật</span></div>
+  </div>
+</section>
+
+<!-- ================= TỤNG KINH ================= -->
+<section id="s-sutra">
+  <div class="card" style="margin-top:0">
+    <h2>📿 Tụng kinh &amp; Lời giảng</h2>
+    <div class="tabs" id="sutraTabs"></div>
+    <div class="paper">
+      <h3 id="sTitle"></h3>
+      <div class="intro" id="sIntro"></div>
+      <p class="hint">Chạm vào từng câu để xem lời giảng</p>
+      <div id="sBody"></div>
+    </div>
+    <div class="ctrl">
+      <button class="btn small" id="btnRead">▶ Tự động đọc</button>
+      <button class="btn small" id="btnVoice">🔊 Giọng đọc: Tắt</button>
+      <button class="btn small" id="btnOpenAll">📖 Mở tất cả lời giảng</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NIỆM PHẬT / GÕ MÕ ================= -->
+<section id="s-mo">
+  <div class="card mo-wrap" style="margin-top:0">
+    <h2>🪵 Niệm Phật · Gõ mõ</h2>
+    <select id="chantSel"></select>
+    <div class="count" id="moCount">0</div>
+    <div class="chant" id="chantText">Chạm vào mõ để niệm</div>
+    <button class="mo" id="moBtn" aria-label="Gõ mõ">🪵</button>
+    <div class="row">
+      <button class="btn small" id="btnAuto">⏵ Tự động gõ</button>
+      <button class="btn small ghost" id="btnReset">↺ Đặt lại</button>
+    </div>
+    <div class="row" style="font-size:13px;color:var(--muted)">
+      Mục tiêu:
+      <select id="goalSel" style="width:auto">
+        <option value="0">Không đặt</option><option value="108" selected>108 biến</option><option value="1080">1080</option><option value="10000">10.000</option>
+      </select>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CẦU NGUYỆN ================= -->
+<section id="s-pray">
+  <div class="card" style="margin-top:0">
+    <h2>🙏 Sổ cầu nguyện</h2>
+    <p style="margin:0 0 8px;font-size:14px;color:var(--muted)">Viết điều con nguyện cầu: bình an, sức khỏe, báo hiếu cha mẹ… Lời nguyện chỉ lưu trên máy của bạn.</p>
+    <input type="text" id="pName" placeholder="Pháp danh / tên (không bắt buộc)" maxlength="40" style="margin-bottom:8px">
+    <select id="pType" style="margin-bottom:8px">
+      <option>🙏 Cầu bình an</option><option>💚 Cầu sức khỏe</option><option>🕯 Cầu siêu</option>
+      <option>📚 Cầu trí tuệ, học hành</option><option>🏠 Cầu gia đạo an vui</option><option>🌏 Hồi hướng chúng sinh</option>
+    </select>
+    <textarea id="pText" placeholder="Con xin nguyện…" maxlength="400"></textarea>
+    <div class="row"><button class="btn" id="btnPray">🪷 Dâng lời nguyện</button></div>
+    <div id="prayList"></div>
+    <div class="row"><button class="btn small ghost" id="btnClearPray">Xóa sổ</button></div>
+  </div>
+</section>
+</main>
+
+<footer>Nam mô A Di Đà Phật 🙏<br>Trang mang tính hỗ trợ tu tập tại gia, không thay thế việc đến chùa lễ Phật.</footer>
+
+<nav>
+  <button data-go="s-hall" class="active"><span class="ic">🛕</span>Chánh điện</button>
+  <button data-go="s-sutra"><span class="ic">📿</span>Tụng kinh</button>
+  <button data-go="s-mo"><span class="ic">🪵</span>Niệm Phật</button>
+  <button data-go="s-pray"><span class="ic">🙏</span>Cầu nguyện</button>
+</nav>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+/* ---------- lưu trữ an toàn ---------- */
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+const stats=store.get("chua_stats",{incense:0,mo:0,name:0});
+function saveStats(){store.set("chua_stats",stats);renderStats()}
+function renderStats(){$("#stIncense").textContent=stats.incense;$("#stMo").textContent=stats.mo;$("#stName").textContent=stats.name}
+renderStats();
+
+/* ---------- âm thanh (Web Audio) ---------- */
+let AC=null;
+function ac(){
+  if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)()}catch(e){}}
+  if(AC&&AC.state==="suspended")AC.resume();
+  return AC;
+}
+function woodBlock(){
+  const c=ac();if(!c)return;
+  const t=c.currentTime;
+  const o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();
+  o.type="triangle";o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(240,t+.12);
+  f.type="bandpass";f.frequency.value=420;f.Q.value=1.2;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.9,t+.005);g.gain.exponentialRampToValueAtTime(.001,t+.22);
+  o.connect(f);f.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.25);
+}
+function bell(){
+  const c=ac();if(!c)return;
+  const t=c.currentTime;
+  [[196,1],[392,.55],[588,.35],[823,.2],[1180,.12]].forEach(([fr,amp],i)=>{
+    const o=c.createOscillator(),g=c.createGain();
+    o.type="sine";o.frequency.value=fr*(1+i*.002);
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.35*amp,t+.01);g.gain.exponentialRampToValueAtTime(.0001,t+5.5);
+    o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+5.6);
+  });
+}
+const vib=ms=>{try{navigator.vibrate&&navigator.vibrate(ms)}catch(e){}};
+
+/* ---------- điều hướng ---------- */
+function go(id){
+  $$("section").forEach(s=>s.classList.toggle("active",s.id===id));
+  $$("nav button").forEach(b=>b.classList.toggle("active",b.dataset.go===id));
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(id!=="s-mo")stopAuto();
+  if(id!=="s-sutra")stopRead();
+}
+$$("nav button").forEach(b=>b.addEventListener("click",()=>{ac();go(b.dataset.go)}));
+
+/* ---------- Chánh điện ---------- */
+const msgs=[
+  "Một nén hương tâm, muôn niềm an lạc.",
+  "Hương thơm lan tỏa, lòng người lắng yên.",
+  "Nguyện cho mọi loài đều được bình an.",
+  "Thở vào, tâm tĩnh lặng. Thở ra, miệng mỉm cười.",
+  "Một ngọn đèn sáng, xua tan bóng tối vô minh."
+];
+const rnd=a=>a[Math.floor(Math.random()*a.length)];
+const hallMsg=t=>{$("#hallMsg").textContent=t};
+let sticks=[];
+function addSmoke(x){
+  const s=document.createElement("div");s.className="smoke";
+  s.style.left=x+"px";
+  s.style.setProperty("--dx",(Math.random()*40-20)+"px");
+  s.style.setProperty("--dx2",(Math.random()*80-40)+"px");
+  $("#censer").appendChild(s);setTimeout(()=>s.remove(),5200);
+}
+function lightIncense(){
+  ac();
+  if(sticks.length>=3){hallMsg("Ba nén hương là đủ rồi — ba nén nhắc ta nhớ Phật, Pháp, Tăng.");return}
+  const censer=$("#censer");
+  const w=censer.clientWidth||100;
+  const slots=[-14,0,14];
+  const x=w/2+slots[sticks.length];
+  const el=document.createElement("div");el.className="stick";
+  el.style.left=x+"px";el.style.height="86px";
+  el.innerHTML='<div class="tip"></div>';
+  censer.appendChild(el);
+  const obj={el,h:86,x};
+  sticks.push(obj);
+  stats.incense++;saveStats();
+  hallMsg(rnd(msgs));vib(30);
+  obj.timer=setInterval(()=>{
+    obj.h-=1.1;el.style.height=Math.max(obj.h,10)+"px";
+    addSmoke(obj.x+(obj.h>10?0:0));
+    if(obj.h<=14){clearInterval(obj.timer);el.remove();sticks=sticks.filter(s=>s!==obj);
+      if(!sticks.length)hallMsg("Nén hương đã tàn. Bạn có thể thắp thêm nén khác.");}
+  },900);
+  addSmoke(x);
+}
+$("#btnIncense").onclick=lightIncense;
+function toggleOn(btn,els,txt){
+  btn.addEventListener("click",()=>{ac();els.forEach(e=>e.classList.add("on"));hallMsg(txt);vib(20)});
+}
+toggleOn($("#btnLamp"),[$("#lampL"),$("#lampR")],"Đèn sáng — trí tuệ soi đường.");
+toggleOn($("#btnFlower"),[$("#offFlower")],"Dâng hoa — tâm hoa thanh tịnh.");
+toggleOn($("#btnFruit"),[$("#offFruit")],"Dâng quả — nguyện kết thành quả lành.");
+$("#btnBell").onclick=()=>{bell();vib(60);hallMsg("Tiếng chuông ngân — nguyện chúng sinh nghe chuông, bớt khổ.")};
+
+function lantern(){
+  const sky=$("#sky");
+  const n=5;
+  for(let i=0;i<n;i++){
+    const l=document.createElement("div");l.className="lantern";l.textContent="🏮";
+    l.style.left=(8+Math.random()*84)+"%";
+    l.style.setProperty("--sx",(Math.random()*60-30)+"px");
+    l.style.animationDuration=(9+Math.random()*6)+"s";
+    l.style.animationDelay=(i*.5)+"s";
+    sky.appendChild(l);setTimeout(()=>l.remove(),16000);
+  }
+  hallMsg("Đèn hoa đăng bay lên, mang theo lời nguyện của bạn.");
+}
+$("#btnLantern").onclick=lantern;
+
+/* ---------- Kinh ---------- */
+const SUTRAS=[
+{
+  id:"tamkinh",name:"Tâm Kinh Bát Nhã",
+  intro:"Bài kinh ngắn nhất, cô đọng tinh túy trí tuệ Bát Nhã (trí tuệ vượt bờ khổ).",
+  verses:[
+   {t:"Quán Tự Tại Bồ Tát, hành thâm Bát Nhã Ba La Mật Đa thời, chiếu kiến ngũ uẩn giai không, độ nhất thiết khổ ách.",
+    g:"Bồ Tát Quán Thế Âm khi thực hành trí tuệ sâu xa, soi thấy năm yếu tố tạo nên con người (thân và tâm) đều không có một cái “ta” cố định. Thấy được vậy, ngài vượt qua mọi khổ đau."},
+   {t:"Xá Lợi Tử, sắc bất dị không, không bất dị sắc; sắc tức thị không, không tức thị sắc; thọ tưởng hành thức, diệc phục như thị.",
+    g:"Này Xá Lợi Phất, hình tướng không khác với tính không, tính không không khác hình tướng. Mọi vật đều do nhân duyên hợp thành, không tự tồn tại riêng. Cảm thọ, tri giác, tâm hành và nhận thức cũng như vậy."},
+   {t:"Xá Lợi Tử, thị chư pháp không tướng, bất sinh bất diệt, bất cấu bất tịnh, bất tăng bất giảm.",
+    g:"Mọi pháp đều mang tính không: không thật sinh, không thật diệt, không dơ không sạch, không thêm không bớt. Những cặp đối lập ấy chỉ là cách ta phân biệt trong tâm."},
+   {t:"Thị cố không trung, vô sắc, vô thọ tưởng hành thức; vô nhãn nhĩ tỷ thiệt thân ý; vô sắc thanh hương vị xúc pháp.",
+    g:"Trong cái nhìn của tính không, không có gì để bám chấp: không có năm uẩn, sáu căn (mắt, tai, mũi, lưỡi, thân, ý) hay sáu trần (hình, tiếng, mùi, vị, xúc chạm, pháp) như những thực thể riêng biệt."},
+   {t:"Vô vô minh, diệc vô vô minh tận, nãi chí vô lão tử, diệc vô lão tử tận.",
+    g:"Cũng không có vô minh hay chỗ chấm dứt vô minh, cho đến không có già chết hay sự hết già chết. Người tu không còn chạy trốn hay đuổi theo điều gì."},
+   {t:"Vô khổ tập diệt đạo, vô trí diệc vô đắc. Dĩ vô sở đắc cố, Bồ Đề Tát Đỏa, y Bát Nhã Ba La Mật Đa cố, tâm vô quái ngại.",
+    g:"Ngay cả Tứ Diệu Đế hay trí chứng, sự đắc được cũng không nên nắm giữ. Vì không còn mong cầu nắm giữ, bậc Bồ Tát nương theo trí tuệ Bát Nhã, tâm không còn chướng ngại."},
+   {t:"Vô quái ngại cố, vô hữu khủng bố, viễn ly điên đảo mộng tưởng, cứu cánh Niết Bàn.",
+    g:"Tâm không chướng ngại thì không sợ hãi, xa rời những nhận thức lầm lạc, đạt đến sự an lạc rốt ráo gọi là Niết Bàn."},
+   {t:"Yết đế yết đế, ba la yết đế, ba la tăng yết đế, bồ đề tát bà ha.",
+    g:"Đây là thần chú Bát Nhã, có thể hiểu là: “Qua rồi, qua rồi, qua bờ bên kia rồi, cùng nhau qua bờ bên kia, giác ngộ viên mãn.” Khi tụng, hãy để tâm lắng yên theo từng âm."}
+  ]
+},
+{
+  id:"samhoi",name:"Sám hối & Hồi hướng",
+  intro:"Bài nguyện ngắn, đọc cuối buổi tu tập để thanh lọc tâm và chia sẻ công đức.",
+  verses:[
+   {t:"Con xin thành tâm sám hối những lỗi lầm đã tạo, do thân, do miệng, do ý nghĩ.",
+    g:"Sám là nhận ra lỗi, hối là quyết tâm sửa đổi. Lỗi có thể đến từ hành động (thân), lời nói (khẩu) hay ý nghĩ (ý). Nhận lỗi một cách chân thành là bước đầu của sự chuyển hóa."},
+   {t:"Từ nay, con nguyện không tái phạm, nguyện sống lành, nói lời ái ngữ, nghĩ điều thiện.",
+    g:"Sám hối chỉ trọn vẹn khi đi cùng quyết tâm sống khác đi. Ái ngữ nghĩa là lời nói dịu dàng, chân thật, làm vơi bớt khổ đau cho người nghe."},
+   {t:"Nguyện đem công đức tụng niệm hôm nay, hồi hướng cho cha mẹ, thầy bạn, và tất cả chúng sinh.",
+    g:"Hồi hướng là gửi phước lành mình tạo được đến người khác, không giữ riêng cho mình. Đây là cách nuôi dưỡng lòng từ bi và mở rộng tâm."},
+   {t:"Nguyện người bệnh được an, người khổ được vui, người đi xa được bình an trở về.",
+    g:"Một lời nguyện cụ thể hướng về những người quanh ta. Khi cầu cho người khác, tâm ta cũng trở nên nhẹ nhàng."},
+   {t:"Nguyện cho tất cả chúng sinh đều được an lạc, thoát khỏi khổ đau, sớm thành đạo giác ngộ.",
+    g:"Đây là tâm nguyện của Bồ Tát: không chỉ tìm an lạc cho riêng mình mà mong tất cả cùng được giải thoát."}
+  ]
+},
+{
+  id:"kimcang",name:"Kệ Kim Cang",
+  intro:"Những bài kệ nổi tiếng trong Kinh Kim Cang, nhắc nhở về tính vô thường của mọi sự.",
+  verses:[
+   {t:"Nhất thiết hữu vi pháp, như mộng huyễn bào ảnh.",
+    g:"Mọi sự vật do nhân duyên tạo thành đều giống như giấc mộng, như ảo ảnh, như bọt nước, như bóng. Thấy rõ như vậy, ta bớt bám víu vào được và mất."},
+   {t:"Như lộ diệc như điện, ưng tác như thị quán.",
+    g:"Chúng cũng như giọt sương mai, như tia chớp thoáng qua. Hãy quán chiếu như vậy để sống nhẹ nhàng giữa cuộc đời vô thường."},
+   {t:"Ưng vô sở trụ nhi sanh kỳ tâm.",
+    g:"Hãy để tâm sinh khởi mà không dính mắc vào bất cứ điều gì: không dính vào hình tướng, âm thanh, hay cảm xúc nhất thời. Tâm tự do mà vẫn thương yêu, giúp đời."}
+  ]
+}
+];
+let curSutra=0,voiceOn=false,readTimer=null,readIdx=-1,reading=false;
+function renderTabs(){
+  $("#sutraTabs").innerHTML="";
+  SUTRAS.forEach((s,i)=>{
+    const b=document.createElement("button");b.textContent=s.name;
+    b.className=i===curSutra?"active":"";
+    b.onclick=()=>{stopRead();curSutra=i;renderSutra()};
+    $("#sutraTabs").appendChild(b);
+  });
+}
+function renderSutra(){
+  renderTabs();
+  const s=SUTRAS[curSutra];
+  $("#sTitle").textContent=s.name;$("#sIntro").textContent=s.intro;
+  const body=$("#sBody");body.innerHTML="";
+  s.verses.forEach((v,i)=>{
+    const d=document.createElement("div");d.className="verse";d.dataset.i=i;
+    d.innerHTML='<div class="t"></div><div class="g"></div>';
+    d.querySelector(".t").textContent=v.t;
+    d.querySelector(".g").textContent="💡 "+v.g;
+    d.onclick=()=>d.classList.toggle("open");
+    body.appendChild(d);
+  });
+}
+function speak(text,cb){
+  if(!voiceOn||!("speechSynthesis" in window)){cb&&setTimeout(cb,Math.max(3500,text.length*85));return}
+  try{
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(text);u.lang="vi-VN";u.rate=.85;
+    u.onend=()=>cb&&cb();u.onerror=()=>cb&&cb();
+    speechSynthesis.speak(u);
+  }catch(e){cb&&setTimeout(cb,3500)}
+}
+function stopRead(){
+  reading=false;clearTimeout(readTimer);
+  try{window.speechSynthesis&&speechSynthesis.cancel()}catch(e){}
+  $$(".verse").forEach(v=>v.classList.remove("reading"));
+  const b=$("#btnRead");if(b)b.textContent="▶ Tự động đọc";
+}
+function readNext(){
+  if(!reading)return;
+  readIdx++;
+  const s=SUTRAS[curSutra];
+  if(readIdx>=s.verses.length){stopRead();bell();return}
+  $$(".verse").forEach(v=>v.classList.remove("reading"));
+  const el=$$(".verse")[readIdx];
+  el.classList.add("reading","open");
+  el.scrollIntoView({behavior:"smooth",block:"center"});
+  woodBlock();
+  speak(s.verses[readIdx].t,()=>{readTimer=setTimeout(readNext,700)});
+}
+$("#btnRead").onclick=()=>{
+  ac();
+  if(reading){stopRead();return}
+  reading=true;readIdx=-1;$("#btnRead").textContent="⏸ Dừng";readNext();
+};
+$("#btnVoice").onclick=()=>{
+  voiceOn=!voiceOn;
+  $("#btnVoice").textContent="🔊 Giọng đọc: "+(voiceOn?"Bật":"Tắt");
+  if(!voiceOn){try{speechSynthesis.cancel()}catch(e){}}
+};
+$("#btnOpenAll").onclick=()=>{
+  const vs=$$(".verse");const allOpen=vs.every(v=>v.classList.contains("open"));
+  vs.forEach(v=>v.classList.toggle("open",!allOpen));
+  $("#btnOpenAll").textContent=allOpen?"📖 Mở tất cả lời giảng":"📕 Đóng tất cả lời giảng";
+};
+renderSutra();
+
+/* ---------- Niệm Phật / gõ mõ ---------- */
+const CHANTS=["Nam mô A Di Đà Phật","Nam mô Quán Thế Âm Bồ Tát","Nam mô Bổn Sư Thích Ca Mâu Ni Phật","Nam mô Địa Tạng Vương Bồ Tát","Nam mô Dược Sư Lưu Ly Quang Vương Phật"];
+CHANTS.forEach((c,i)=>{const o=document.createElement("option");o.value=i;o.textContent=c;$("#chantSel").appendChild(o)});
+let moCount=store.get("chua_moCount",0),autoTimer=null;
+const goalReached=()=>{const g=+$("#goalSel").value;return g>0&&moCount>0&&moCount%g===0};
+function renderMo(){$("#moCount").textContent=moCount}
+renderMo();
+function hitMo(ev){
+  ac();woodBlock();vib(15);
+  moCount++;stats.mo++;
+  if(moCount%4===0)stats.name++;
+  store.set("chua_moCount",moCount);saveStats();renderMo();
+  const btn=$("#moBtn");btn.classList.add("hit");setTimeout(()=>btn.classList.remove("hit"),80);
+  const txt=CHANTS[+$("#chantSel").value].split(" ");
+  const w=txt[(moCount-1)%txt.length]||"";
+  $("#chantText").textContent=CHANTS[+$("#chantSel").value];
+  const r=btn.getBoundingClientRect();
+  const p=document.createElement("div");p.className="pop";p.textContent="🙏 +1";
+  p.style.left=(r.left+r.width/2+(Math.random()*60-30))+"px";p.style.top=(r.top+10)+"px";
+  document.body.appendChild(p);setTimeout(()=>p.remove(),1000);
+  if(goalReached()){bell();$("#chantText").textContent="🎉 Tròn "+moCount+" biến — công đức viên mãn!"}
+}
+$("#moBtn").addEventListener("pointerdown",e=>{e.preventDefault();hitMo()});
+$("#moBtn").addEventListener("keydown",e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();hitMo()}});
+function stopAuto(){clearInterval(autoTimer);autoTimer=null;const b=$("#btnAuto");if(b)b.textContent="⏵ Tự động gõ"}
+$("#btnAuto").onclick=()=>{
+  if(autoTimer){stopAuto();return}
+  ac();$("#btnAuto").textContent="⏸ Dừng";
+  autoTimer=setInterval(hitMo,900);
+};
+$("#btnReset").onclick=()=>{moCount=0;store.set("chua_moCount",0);renderMo();$("#chantText").textContent="Chạm vào mõ để niệm"};
+document.addEventListener("keydown",e=>{
+  if($("#s-mo").classList.contains("active")&&e.code==="Space"&&document.activeElement.tagName!=="SELECT"&&document.activeElement.id!=="moBtn"){e.preventDefault();hitMo()}
+});
+
+/* ---------- Sổ cầu nguyện ---------- */
+let prayers=store.get("chua_prayers",[]);
+function esc(s){return s.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function renderPray(){
+  const box=$("#prayList");
+  if(!prayers.length){box.innerHTML='<p style="text-align:center;color:var(--muted);font-size:14px">Chưa có lời nguyện nào.</p>';return}
+  box.innerHTML=prayers.map(p=>'<div class="pray-item"><b>'+esc(p.type)+'</b><br>'+esc(p.text)+'<small>'+esc(p.name||"Phật tử")+' · '+esc(p.date)+'</small></div>').join("");
+}
+$("#btnPray").onclick=()=>{
+  const text=$("#pText").value.trim();
+  if(!text){$("#pText").focus();return}
+  prayers.unshift({type:$("#pType").value,text,name:$("#pName").value.trim(),date:new Date().toLocaleString("vi-VN")});
+  prayers=prayers.slice(0,50);
+  store.set("chua_prayers",prayers);
+  $("#pText").value="";renderPray();bell();vib(40);
+};
+$("#btnClearPray").onclick=()=>{if(confirm("Xóa toàn bộ lời nguyện đã lưu?")){prayers=[];store.set("chua_prayers",prayers);renderPray()}};
+renderPray();
+})();
+</script>
+</body>
+</html>
+
